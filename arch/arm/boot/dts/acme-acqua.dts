@@ -9,7 +9,7 @@
  * Licensed under GPLv2 or later.
  */
 /dts-v1/;
-#include "sama5d3.dtsi"
+#include "sama5d31.dtsi"
 
 / {
 	model = "Acqua A5 SoM";
@@ -105,6 +105,26 @@
 					reg = <0x1a>;
 					clocks = <&pck0>;
 					clock-names = "mclk";
+				};
+				
+				tvp5150: camera@0xb8 {
+					compatible = "ti,tvp5150";
+					reg = <0xb8>;
+					pinctrl-names = "default";
+					pinctrl-0 = <&pinctrl_pck1_as_isi_mck &pinctrl_sensor_power &pinctrl_sensor_reset>;
+					resetb-gpios = <&pioE 24 GPIO_ACTIVE_LOW>;
+					pwdn-gpios = <&pioE 29 GPIO_ACTIVE_HIGH>;
+					clocks = <&pck1>;
+					clock-names = "xvclk";
+					assigned-clocks = <&pck1>;
+					assigned-clock-rates = <14318180>;
+
+					port {
+						tvp5150_0: endpoint {
+							remote-endpoint = <&isi_4>;
+							bus-width = <8>;
+						};
+					};
 				};
 				
 				ov9740: camera@0x10 {
@@ -397,6 +417,11 @@
 
 				isi_3: endpoint@3 {
 					remote-endpoint = <&ov9740_0>;
+					bus-width = <8>;
+				};
+				
+				isi_4: endpoint@4 {
+					remote-endpoint = <&tvp5150_0>;
 					bus-width = <8>;
 				};
 			};
